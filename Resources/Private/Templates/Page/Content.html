@@ -1,0 +1,24 @@
+<html 
+    xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
+    data-namespace-typo3-fluid="true"
+>
+    <f:layout name="Default" />
+
+    <f:section name="Main">
+        <body 
+            data-id="{data.uid}"
+        >
+            <section id="header">
+                <f:render partial="Header" arguments="{page: data}" />
+            </section>
+
+            <section id="content">
+                <f:format.raw>{content}</f:format.raw>
+            </section>
+
+            <section id="footer">
+                <f:render partial="Footer" arguments="{page: data}" />
+            </section>
+        </body>
+    </f:section>
+</html>

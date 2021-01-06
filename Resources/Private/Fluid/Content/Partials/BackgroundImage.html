@@ -1,0 +1,13 @@
+<f:if condition="{image}">
+    <f:then>
+        <div 
+            class="background-image"
+            style="background-image: url({f:uri.image(src: '{image.properties.uid}', treatIdAsReference: 1)});"
+            data-height="{image.properties.height}"
+        >{content -> f:format.raw()}</div>
+    </f:then>
+
+    <f:else>
+        <div class="background-image">{content -> f:format.raw()}</div>
+    </f:else>
+</f:if>

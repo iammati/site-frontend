@@ -1,0 +1,11 @@
+<site:container data="{data}" />
+
+<f:if condition="{additionalHtml}">
+    <f:format.raw>{additionalHtml}</f:format.raw>
+</f:if>
+
+<div class="container{gridClasses}">
+    <div class="row">
+        <f:format.raw>{content}</f:format.raw>
+    </div>
+</div>

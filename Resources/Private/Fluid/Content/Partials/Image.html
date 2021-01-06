@@ -1,0 +1,60 @@
+<html 
+    xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
+    xmlns:site="Site\Core\ViewHelpers"
+    data-namespace-typo3-fluid="true"
+>
+    <f:if condition="{image}">
+        <f:if condition="{asSvg}">
+            <f:then>
+                {site:image2svg(svg: image) -> f:format.raw()}
+            </f:then>
+
+            <f:else>
+                <picture>
+                    <source 
+                        data-identifier="mobile"
+                        media="(max-width: 767.98px)"
+                        srcset="{f:uri.image(src: image.properties.uid, treatIdAsReference: 1, cropVariant: 'mobile')}"
+                    />
+
+                    <source 
+                        data-identifier="tablet_portrait"
+                        media="(min-width: 768px) and (max-width: 991.98px) and (orientation: portrait)"
+                        srcset="{f:uri.image(src: image.properties.uid, treatIdAsReference: 1, cropVariant: 'tablet_portrait')}"
+                    />
+
+                    <source 
+                        data-identifier="tablet_landscape_small"
+                        media="(min-width: 768px) and (max-width: 991.98px) and (orientation: landscape)"
+                        srcset="{f:uri.image(src: image.properties.uid, treatIdAsReference: 1, cropVariant: 'tablet_landscape')}"
+                    />
+
+                    <source 
+                        data-identifier="tablet_landscape_default"
+                        media="(min-width: 992px) and (max-width: 1199.98px)"
+                        srcset="{f:uri.image(src: image.properties.uid, treatIdAsReference: 1, cropVariant: 'tablet_landscape')}"
+                    />
+
+                    <source 
+                        data-identifier="desktop"
+                        media="(min-width: 1200px)"
+                        srcset="{f:uri.image(src: image.properties.uid, treatIdAsReference: 1, cropVariant: 'desktop')}"
+                    />
+
+                    <f:comment>
+                        @todo maybe change f:image into f:media which automatically handles video and audio formats
+                        by itself rather than depending on the fluid-image VH which, obiviously, only supports image-formats.
+
+                        Additionally add webp-image-format as source-tag maybe too, but that would mean 5 more source-tags foreach cropVariant.
+                    </f:comment>
+
+                    <f:image 
+                        src="{image.properties.uid}"
+                        treatIdAsReference="1"
+                        class="img-fluid w-100{f:if(condition: additionalClasses, then: ' {additionalClasses}')}"
+                    />
+                </picture>
+            </f:else>
+        </f:if>
+    </f:if>
+</html>
