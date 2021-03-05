@@ -15,5 +15,17 @@ return [
                 'typo3/cms-frontend/base-redirect-resolver',
             ],
         ],
+
+        'site-frontend/pagerenderer' => [
+            'target' => Middleware\PageRendererMiddleware::class,
+
+            'after' => [
+                'typo3/cms-frontend/prepare-tsfe-rendering',
+            ],
+
+            'before' => [
+                'typo3/cms-frontend/shortcut-and-mountpoint-redirect',
+            ],
+        ],
     ],
 ];

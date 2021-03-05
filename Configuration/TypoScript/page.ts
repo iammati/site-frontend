@@ -14,7 +14,7 @@ page {
     config.prefixLocalAnchors = all
     config.no_cache = 1
     config.cache = 0
-    config.noPageTitle = 1
+    config.noPageTitle = 2
 
     // FLUIDTEMPLATE page object
     10 = FLUIDTEMPLATE

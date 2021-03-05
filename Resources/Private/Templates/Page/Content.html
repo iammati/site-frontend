@@ -5,20 +5,16 @@
     <f:layout name="Default" />
 
     <f:section name="Main">
-        <body 
-            data-id="{data.uid}"
-        >
-            <section id="header">
-                <f:render partial="Header" arguments="{page: data}" />
-            </section>
+        <section id="header">
+            <f:render partial="Header" arguments="{page: data}" />
+        </section>
 
-            <section id="content">
-                <f:format.raw>{content}</f:format.raw>
-            </section>
+        <section id="content">
+            <f:format.raw>{content}</f:format.raw>
+        </section>
 
-            <section id="footer">
-                <f:render partial="Footer" arguments="{page: data}" />
-            </section>
-        </body>
+        <section id="footer">
+            <f:render partial="Footer" arguments="{page: data}" />
+        </section>
     </f:section>
 </html>
