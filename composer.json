@@ -3,7 +3,7 @@
     "type": "typo3-cms-extension",
     "description": "Usage to build in an incredible fast way a frontend for your project.",
     "license": "GPL-2.0-or-later",
-    "version": "1.0.0",
+    "version": "2.0.0",
     "minimum-stability": "stable",
     "authors": [
         {
@@ -13,15 +13,16 @@
         }
     ],
     "require": {
-        "typo3/cms-core": "^10.4"
+        "site/site-core": "*"
     },
     "autoload": {
         "psr-4": {
             "Site\\Frontend\\": "Classes"
         }
     },
-    "suggest": {
-        "site/site-backend": "Should be used in combination with core's TCA-Service to build a fast frontend.",
-        "site/site-core": "The core application which would be perfectly used in harmony for both backend and frontend."
+    "extra": {
+        "typo3/cms": {
+            "extension-key": "site_frontend"
+        }
     }
 }

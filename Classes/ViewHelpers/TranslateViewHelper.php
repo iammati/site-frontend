@@ -2,6 +2,7 @@
 
 namespace Site\Frontend\ViewHelpers;
 
+use Site\Core\Utility\ExceptionUtility;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
 /**
@@ -25,14 +26,16 @@ class TranslateViewHelper extends AbstractViewHelper
      * The actual render logic whenever this VH gets called.
      * Handles the given arguments, generates and adds at the end.
      *
-     * @return void
+     * @return mixed
+     *
+     * @throws ExceptionUtility
      */
     public function render()
     {
         $extKey = $this->arguments['extKey'] ?? env('FRONTEND_EXT');
         $identifier = $this->arguments['identifier'];
 
-        $language = request()->getAttribute('language');
+        $language = serverRequest()->getAttribute('language');
         $twoLetterIsoCode = $language->getTwoLetterIsoCode();
 
         return ll($extKey, $identifier, $twoLetterIsoCode);

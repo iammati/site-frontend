@@ -50,8 +50,24 @@ class PageRendererMiddleware implements MiddlewareInterface
         ServerRequestInterface $request,
         RequestHandlerInterface $handler
     ): ResponseInterface {
-        $this->pageRenderer->setCharSet('UTF-8');
         $this->pageRenderer->setTitle($this->pageService->getTitle());
+        $this->pageRenderer->setCharSet('UTF-8');
+
+        $this->pageRenderer->setMetaTag(
+            'name',
+            'viewport',
+            'user-scalable=no, width=device-width, initial-scale=1.0'
+        );
+
+        $this->pageRenderer->addCssFile('EXT:site_frontend/Resources/Public/Css/app.css');
+
+        $this->pageRenderer->addJsFile(
+            $file = 'EXT:site_frontend/Resources/Public/JavaScript/app.js',
+            $type = 'text/javascript', $compress = true, $forceOnTop = false,
+            $allWrap = '', $excludeFromConcatenation = false, $splitChar = '|',
+            $async = true, $integrity = '', $defer = true,
+            $crossorigin = '', $nomodule = false
+        );
 
         return $handler->handle($request);
     }

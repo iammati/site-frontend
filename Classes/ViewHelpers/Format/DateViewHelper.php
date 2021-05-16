@@ -32,7 +32,7 @@ class DateViewHelper extends AbstractViewHelper
 
         $day = $date->format('d');
         $monthAsNumb = $date->format('m');
-        $month = ll(getenv('FRONTEND_EXT'), 'Date.MonthNames:'.$monthAsNumb);
+        $month = ll(env('FRONTEND_EXT'), 'Date.MonthNames:'.$monthAsNumb);
         $year = $date->format('Y');
 
         $date = $day.'. '.$month.' '.$year;

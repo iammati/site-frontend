@@ -32,7 +32,7 @@ class CtypeStyleExistsViewHelper extends AbstractViewHelper
     public function render()
     {
         $ctype = $this->arguments['ctype'];
-        $path = ExtensionManagementUtility::extPath(getenv('FRONTEND_EXT'), 'Resources/Public/ContentElements/css/'.$ctype.'.css');
+        $path = ExtensionManagementUtility::extPath(env('FRONTEND_EXT'), 'Resources/Public/ContentElements/css/'.$ctype.'.css');
 
         return file_exists($path);
     }

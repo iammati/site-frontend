@@ -1,35 +1,26 @@
 page = PAGE
 page {
     typeNum = 0
-    config.linkVars = L
 
-    // Default language
-    config.sys_language_uid = 0
-    config.language = de
-    config.locale_all = de_DE.UTF-8
-    config.htmlTag_setParams = lang='de' dir='ltr'
+    config {
+        no_cache = 1
+        cache = 0
+        noPageTitle = 2
+    }
 
-    config.absRefPrefix = /
-    config.simulateStaticDocuments = 0
-    config.prefixLocalAnchors = all
-    config.no_cache = 1
-    config.cache = 0
-    config.noPageTitle = 2
-
-    // FLUIDTEMPLATE page object
     10 = FLUIDTEMPLATE
     10 {
         layoutRootPaths {
-            10 = EXT:site_frontend/Resources/Private/Layouts/
+            10 = EXT:site_frontend/Resources/Private/Page/Layouts/
         }
 
         partialRootPaths {
-            10 = EXT:site_frontend/Resources/Private/Partials/
+            10 = EXT:site_frontend/Resources/Private/Page/Partials/
             15 = EXT:site_frontend/Resources/Private/Fluid/Content/Partials/
         }
 
         templateRootPaths {
-            10 = EXT:site_frontend/Resources/Private/Templates/Page/
+            10 = EXT:site_frontend/Resources/Private/Page/Templates/
         }
 
         templateName = TEXT
@@ -45,19 +36,15 @@ page {
         }
 
         variables {
-            // Declaring of Content Render Types for Backend Layouts
             content = CONTENT
             content {
                 table = tt_content
 
                 select {
                     orderBy = sorting
-                    where = colPos = 0
-                    languageField = 
+                    where = {#colPos}=0
                 }
             }
         }
     }
 }
-
-@import 'EXT:site_frontend/Configuration/TypoScript/Page/*.ts'
