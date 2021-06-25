@@ -8,6 +8,7 @@ $EM_CONF[$_EXTKEY] = [
     'author_email' => 'mati_01@icloud.com',
     'state' => 'stable',
     'author' => 'Frontend',
+    'version' => '2.1.0',
     'constraints' => [
         'conflicts' => [],
         'suggests' => [],

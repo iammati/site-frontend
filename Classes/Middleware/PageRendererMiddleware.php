@@ -17,7 +17,6 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Site\Frontend\Service\PageService;
-use Site\Frontend\Traits\PageTrait;
 use TYPO3\CMS\Core\Page\PageRenderer;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -59,10 +58,10 @@ class PageRendererMiddleware implements MiddlewareInterface
             'user-scalable=no, width=device-width, initial-scale=1.0'
         );
 
-        $this->pageRenderer->addCssFile('EXT:site_frontend/Resources/Public/Css/app.css');
+        $this->pageRenderer->addCssFile('EXT:site_frontend/Resources/Public/Css/app.min.css');
 
         $this->pageRenderer->addJsFile(
-            $file = 'EXT:site_frontend/Resources/Public/JavaScript/app.js',
+            $file = 'EXT:site_frontend/Resources/Public/JavaScript/app.min.js',
             $type = 'text/javascript', $compress = true, $forceOnTop = false,
             $allWrap = '', $excludeFromConcatenation = false, $splitChar = '|',
             $async = true, $integrity = '', $defer = true,

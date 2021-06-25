@@ -2,6 +2,13 @@ page = PAGE
 page {
     typeNum = 0
 
+    headerData {
+        1 = TEXT
+        1.value (
+            <script src="/typo3conf/ext/site_frontend/Resources/Public/JavaScript/cookie.js" defer></script>
+        )
+    }
+
     config {
         no_cache = 1
         cache = 0

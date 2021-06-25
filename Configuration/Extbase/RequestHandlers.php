@@ -1,5 +1,7 @@
 <?php
 
+use Site\Frontend\Mvc\Web;
+
 return [
-    \Site\Frontend\Mvc\Web\FrontendRequestHandler::class,
+    Web\FrontendRequestHandler::class,
 ];

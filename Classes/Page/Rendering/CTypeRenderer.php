@@ -56,8 +56,6 @@ class CTypeRenderer
     protected $dataMapper;
 
     /**
-     * Inject the DataMapper
-     *
      * @param DataMapper $dataMapper
      */
     public function injectDataMapper(DataMapper $dataMapper)
@@ -102,11 +100,6 @@ class CTypeRenderer
         // Calling the default and custom after rendering events
         $this->renderingEvent($templateCType, 'afterRendering');
         $this->defaultRenderingEvent->afterRendering($this->cObj);
-
-        if ($this->cObj->renderedView === null) {
-            // What happens here?
-            // dd($this->cObj);
-        }
 
         return trim($this->cObj->renderedView);
     }
@@ -153,8 +146,6 @@ class CTypeRenderer
 
     /**
      * @param string $templateCType Template name e.g. 'Headerrte' or 'Textimage' etc.
-     *
-     * @return void
      */
     public function renderCObj(string $templateCType)
     {
@@ -175,9 +166,6 @@ class CTypeRenderer
         }
     }
 
-    /**
-     * @return void
-     */
     protected function resolveRenderingRootPaths()
     {
         $rootPathsIdentifier = $this->defaultRootPathsIdentifier;
