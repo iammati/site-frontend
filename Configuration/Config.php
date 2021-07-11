@@ -17,6 +17,7 @@ return [
         ],
 
         'rendering' => [
+            'autoGenerateModelRepos' => true,
             'EventNamespace' => 'Site\\Frontend\\Event\\Rendering\\',
             'RepositoryNamespace' => 'Site\\SiteBackend\\Domain\\Repository\\',
         ],

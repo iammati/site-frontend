@@ -44,4 +44,15 @@ class FrontendRequestHandler extends ExtbaseFrontendRequestHandler
     {
         return parent::isActionCacheable($controllerClassName, $actionName);
     }
+
+    /**
+     * Returns the priority - how eager the handler is to actually handle the
+     * request.
+     *
+     * @return int The priority of the request handler.
+     */
+    public function getPriority()
+    {
+        return 101;
+    }
 }

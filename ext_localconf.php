@@ -4,7 +4,7 @@
     include TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath('site_frontend', 'helpers.php');
 
     \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addTypoScriptConstants(trim("
-        @import 'EXT:site_frontend/Configuration/TypoScript/constants.ts'
+        @import 'EXT:site_frontend/Configuration/TypoScript/constants.typoscript'
     "));
 
     /** @var Site\Core\Service\LocalizationService */

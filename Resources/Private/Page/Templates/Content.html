@@ -6,11 +6,13 @@
     <f:layout name="Default" />
 
     <f:section name="Main">
-        <site:translate identifier="Frontend.Test:key" />
+        <f:comment>
+            <site:translate identifier="Frontend.Test:key" />
 
-        <button id="alert" class="btn btn-primary waves-effect waves-light">
-            Alert Button
-        </button>
+            <button id="alert" class="btn btn-primary waves-effect waves-light">
+                Alert Button
+            </button>
+        </f:comment>
 
         <section id="header">
             <f:render partial="Header" arguments="{page: data}" />

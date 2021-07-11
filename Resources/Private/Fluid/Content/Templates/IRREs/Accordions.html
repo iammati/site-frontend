@@ -5,11 +5,13 @@
     <f:layout name="Default" />
 
     <f:section name="Main">
-        <f:if condition="{data.ce_rte}">
+        <f:if condition="{data.fd_rte}">
             <div class="rte-view">
-                <f:format.nl2br>{data.ce_rte -> f:format.raw()}</f:format.nl2br>
+                <f:format.nl2br>{data.fd_rte -> f:format.raw()}</f:format.nl2br>
             </div>
         </f:if>
+
+        <f:debug>{_all}</f:debug>
 
         <div class="col-12">
             <div class="row items">

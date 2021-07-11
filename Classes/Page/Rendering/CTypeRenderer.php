@@ -25,47 +25,15 @@ use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
  */
 class CTypeRenderer
 {
-    /**
-     * @var ContentObjectRenderer
-     */
-    public $cObj;
+    public ContentObjectRenderer $cObj;
 
-    /**
-     * @var string
-     */
-    protected $frontendExtKey;
+    protected string $frontendExtKey;
+    protected string $defaultRootPathsIdentifier = 'ContentElements.rootPaths';
 
-    /**
-     * @var RenderingEvent
-     */
-    protected $defaultRenderingEvent;
+    protected RenderingEvent $defaultRenderingEvent;
+    protected TtcontentRepository $ttcontentRepository;
+    protected DataMapper $dataMapper;
 
-    /**
-     * @var string
-     */
-    protected $defaultRootPathsIdentifier = 'ContentElements.rootPaths';
-
-    /**
-     * @var TtcontentRepository
-     */
-    protected $ttcontentRepository;
-
-    /**
-     * @var DataMapper
-     */
-    protected $dataMapper;
-
-    /**
-     * @param DataMapper $dataMapper
-     */
-    public function injectDataMapper(DataMapper $dataMapper)
-    {
-        $this->dataMapper = $dataMapper;
-    }
-
-    /**
-     * Construction for each tt_content.CType rendering.
-     */
     public function __construct()
     {
         $this->frontendExtKey = env('FRONTEND_EXT');
@@ -73,14 +41,17 @@ class CTypeRenderer
         $this->ttcontentRepository = GeneralUtility::makeInstance(TtcontentRepository::class);
     }
 
+    public function injectDataMapper(DataMapper $dataMapper)
+    {
+        $this->dataMapper = $dataMapper;
+    }
+
     /**
      * Method to be called when a CType gets rendered without a default.
      * The rendering-method reads out its CType and trys to resolve the Template-Name
      * prefixed with the configured rootPaths.
-     *
-     * @return string
      */
-    public function render()
+    public function render(): string
     {
         $uid = $this->cObj->data['uid'];
         $record = $this->ttcontentRepository->findByUid($uid);
@@ -105,11 +76,9 @@ class CTypeRenderer
     }
 
     /**
-     * Caller of the RenderingEvent (before and after).
-     *
-     * @return ContentObjectRenderer
+     * Main-Caller of the RenderingEvent (for both before and after).
      */
-    public function renderingEvent(string $templateCType, string $method)
+    public function renderingEvent(string $templateCType, string $method): ContentObjectRenderer
     {
         $namespaceIdentifier = 'ContentElements.rendering.EventNamespace';
         $namespace = ConfigHelper::get($this->frontendExtKey, $namespaceIdentifier);
