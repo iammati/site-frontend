@@ -1,5 +1,5 @@
 // EXT:fluid_styled_content
 @import 'EXT:fluid_styled_content/Configuration/TypoScript/setup.typoscript'
 
-// Page.typoscript
+// PAGE with typeNum=1
 @import 'EXT:site_frontend/Configuration/TypoScript/page.typoscript'
