@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Site\Frontend\Traits;
 
-use FluidTYPO3\Vhs\Service\PageService;
+use Site\Frontend\Service\PageService;
 use TYPO3\CMS\Core\Domain\Repository\PageRepository;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -16,17 +16,12 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  */
 trait PageTrait
 {
-    /**
-     * @var PageRepository
-     */
-    protected $pageRepository = null;
+    protected PageRepository $pageRepository;
 
     /**
      * Logic to fetch the targeted page.
-     *
-     * @return array
      */
-    protected function getPage()
+    protected function getPage(): array
     {
         $this->pageRepository = GeneralUtility::makeInstance(PageRepository::class);
 
@@ -36,10 +31,7 @@ trait PageTrait
         return $page;
     }
 
-    /**
-     * @return PageService
-     */
-    protected function getPageService()
+    protected function getPageService(): PageService
     {
         return GeneralUtility::makeInstance(PageService::class);
     }

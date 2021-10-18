@@ -1,29 +1,15 @@
-<html 
-    xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
-    xmlns:site="Site\Frontend\ViewHelpers"
-    data-namespace-typo3-fluid="true"
->
-    <f:layout name="Default" />
+<f:layout name="Default" />
 
-    <f:section name="Main">
-        <f:comment>
-            <site:translate identifier="Frontend.Test:key" />
+<f:section name="Main">
+    <section id="header">
+        <f:render partial="Header" arguments="{page: data}" />
+    </section>
 
-            <button id="alert" class="btn btn-primary waves-effect waves-light">
-                Alert Button
-            </button>
-        </f:comment>
+    <section id="content">
+        <f:format.raw>{content}</f:format.raw>
+    </section>
 
-        <section id="header">
-            <f:render partial="Header" arguments="{page: data}" />
-        </section>
-
-        <section id="content">
-            <f:format.raw>{content}</f:format.raw>
-        </section>
-
-        <section id="footer">
-            <f:render partial="Footer" arguments="{page: data}" />
-        </section>
-    </f:section>
-</html>
+    <section id="footer">
+        <f:render partial="Footer" arguments="{page: data}" />
+    </section>
+</f:section>

@@ -1,8 +1,5 @@
 // EXT:fluid_styled_content
 @import 'EXT:fluid_styled_content/Configuration/TypoScript/setup.typoscript'
 
-// .env-generated environment.typoscript file
-@import 'EXT:site_frontend/Configuration/TypoScript/Constants/environment.typoscript'
-
 // Page.typoscript
 @import 'EXT:site_frontend/Configuration/TypoScript/page.typoscript'

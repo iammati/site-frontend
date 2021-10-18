@@ -30,7 +30,7 @@ class HeaderViewHelper extends AbstractViewHelper
         }
 
         if (is_array($logo)) {
-            $this->templateVariableContainer->add('logo', $logo[0]);
+            $this->templateVariableContainer->add('logo', $logo[0] ?? null);
         }
     }
 }

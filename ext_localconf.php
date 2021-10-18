@@ -1,21 +1,21 @@
 <?php
 
+use Site\Core\Service\LocalizationService;
+use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
+
 (function () {
-    include TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath('site_frontend', 'helpers.php');
+    include ExtensionManagementUtility::extPath('site_frontend', 'helpers.php');
 
-    \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addTypoScriptConstants(trim("
-        @import 'EXT:site_frontend/Configuration/TypoScript/constants.typoscript'
-    "));
-
-    /** @var Site\Core\Service\LocalizationService */
-    $localizationService = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(Site\Core\Service\LocalizationService::class);
+    /** @var LocalizationService */
+    $localizationService = GeneralUtility::makeInstance(LocalizationService::class);
 
     $localizationService->register(env('FRONTEND_EXT'), [
         'default' => 'Resources/Private/Language/',
     ]);
 
-    \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addTypoScriptSetup(
-            '
+    ExtensionManagementUtility::addTypoScriptSetup(
+        '
 # Content element rendering
 tt_content.default >
 tt_content {
@@ -27,7 +27,11 @@ tt_content {
     default {
         userFunc = Site\Frontend\Page\Rendering\CTypeRenderer->render
     }
-}
-            '
-        );
+}'
+    );
+
+    // Global namespace registration for 'site' => 'Site\Frontend\ViewHelpers'
+    $GLOBALS['TYPO3_CONF_VARS']['SYS']['fluid']['namespaces']['site'] = [
+        'Site\Frontend\ViewHelpers',
+    ];
 })();

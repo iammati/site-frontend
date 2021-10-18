@@ -19,7 +19,7 @@ use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
 
 class RenderingEvent implements CTypeRenderingInterface
 {
-    public function beforeRendering(ContentObjectRenderer &$cObj)
+    public function beforeRendering(ContentObjectRenderer &$cObj): ContentObjectRenderer
     {
         $backendExt = str_replace('_', '', env('BACKEND_EXT'));
         $autoGenerateModelRepos = ConfigHelper::get(env('FRONTEND_EXT'), 'ContentElements.rendering.autoGenerateModelRepos');
@@ -97,7 +97,7 @@ class RenderingEvent implements CTypeRenderingInterface
         return $cObj;
     }
 
-    public function afterRendering(ContentObjectRenderer &$cObj)
+    public function afterRendering(ContentObjectRenderer &$cObj): ContentObjectRenderer
     {
         return $cObj;
     }

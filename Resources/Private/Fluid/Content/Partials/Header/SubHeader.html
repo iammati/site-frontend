@@ -1,0 +1,38 @@
+<f:if condition="{subheader}">
+    <f:variable name="class">{positionClass} mt-1</f:variable>
+
+    <f:switch expression="{layout}">
+        <f:case value="1">
+            <h2 class="{class}">
+                {subheader}
+            </h2>
+        </f:case>
+        <f:case value="2">
+            <h3 class="{class}">
+                {subheader}
+            </h3>
+        </f:case>
+        <f:case value="3">
+            <h4 class="{class}">
+                {subheader}
+            </h4>
+        </f:case>
+        <f:case value="4">
+            <h5 class="{class}">
+                {subheader}
+            </h5>
+        </f:case>
+        <f:case value="5">
+            <h6 class="{class}">
+                {subheader}
+            </h6>
+        </f:case>
+        <f:defaultCase>
+            <f:render partial="Header/SubHeader" arguments="{
+                subheader: subheader,
+                positionClass: positionClass,
+                layout: 5
+            }" />
+        </f:defaultCase>
+    </f:switch>
+</f:if>

@@ -4,14 +4,6 @@ declare(strict_types=1);
 
 namespace Site\Frontend\Middleware;
 
-/*
- * This file is part of TYPO3 CMS-based extension 'JustInCase' by b13.
- *
- * It is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License, either version 2
- * of the License, or any later version.
- */
-
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -29,15 +21,8 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  */
 class PageRendererMiddleware implements MiddlewareInterface
 {
-    /**
-     * @var PageRenderer
-     */
-    protected $pageRenderer;
-
-    /**
-     * @var PageService
-     */
-    protected $pageService;
+    protected PageRenderer $pageRenderer;
+    protected PageService $pageService;
 
     public function __construct()
     {

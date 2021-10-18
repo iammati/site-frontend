@@ -23,7 +23,7 @@ use TYPO3\CMS\Core\Site\Entity\Site;
 /**
  * Middleware for lowercase URI.
  *
- * @credits https://github.com/b13/justincase
+ * @author https://github.com/b13/justincase
  */
 class LowerCaseUriMiddleware implements MiddlewareInterface
 {

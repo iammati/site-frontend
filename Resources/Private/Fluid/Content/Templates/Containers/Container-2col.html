@@ -2,8 +2,14 @@
 
 <f:section name="Main">
     <f:render partial="Container" arguments="{_all}" contentAs="content">
-        <div class="col-12">
+        <div class="col-12 col-lg">
             <f:for each="{data.children_10}" as="element">
+                {element.renderedContent -> f:format.raw()}
+            </f:for>
+        </div>
+
+        <div class="col-12 col-lg">
+            <f:for each="{data.children_20}" as="element">
                 {element.renderedContent -> f:format.raw()}
             </f:for>
         </div>

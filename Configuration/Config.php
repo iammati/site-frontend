@@ -24,17 +24,10 @@ return [
     ],
 
     'header' => [
-        'pid' => env('HEADER_PID'),
-        'main' => env('PID_HEADER'),
+        'main' => env('HEADER_PID'),
     ],
 
     'footer' => [
-        'pid' => env('FOOTER_PID'),
-        'main' => env('PID_FOOTER_MAIN'),
-        'meta' => env('PID_FOOTER_META'),
-    ],
-
-    'contentElements' => [
-        'contactFormPid' => env('PID_CE_CONTACTFORM'),
+        'main' => env('FOOTER_PID'),
     ],
 ];

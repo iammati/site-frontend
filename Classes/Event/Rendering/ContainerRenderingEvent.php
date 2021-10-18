@@ -13,15 +13,8 @@ use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
 
 class ContainerRenderingEvent implements CTypeRenderingInterface
 {
-    /**
-     * @var ContainerProcessor
-     */
-    protected $containerProcessor;
-
-    /**
-     * @var CTypeRenderer
-     */
-    protected $CTypeRenderer;
+    protected ContainerProcessor $containerProcessor;
+    protected CTypeRenderer $CTypeRenderer;
 
     public function __construct()
     {
@@ -29,7 +22,7 @@ class ContainerRenderingEvent implements CTypeRenderingInterface
         $this->CTypeRenderer = GeneralUtility::makeInstance(CTypeRenderer::class);
     }
 
-    public function beforeRendering(ContentObjectRenderer &$cObj)
+    public function beforeRendering(ContentObjectRenderer &$cObj): ContentObjectRenderer
     {
         $cObj->renderingRootPaths['Templates'] .= 'Containers/';
 
@@ -61,7 +54,7 @@ class ContainerRenderingEvent implements CTypeRenderingInterface
         return $cObj;
     }
 
-    public function afterRendering(ContentObjectRenderer &$cObj)
+    public function afterRendering(ContentObjectRenderer &$cObj): ContentObjectRenderer
     {
         return $cObj;
     }

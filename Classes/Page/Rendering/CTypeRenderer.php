@@ -139,7 +139,7 @@ class CTypeRenderer
     {
         $rootPathsIdentifier = $this->defaultRootPathsIdentifier;
 
-        if ($this->cObj->data['is_irre']) {
+        if (isset($this->cObj->data['is_irre']) && $this->cObj->data['is_irre']) {
             $rootPathsIdentifier .= '.IRREs';
         }
 
