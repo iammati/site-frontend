@@ -6,22 +6,20 @@ namespace Site\Frontend\Page\Rendering;
 
 use Site\Core\Helper\ConfigHelper;
 use Site\Core\Utility\StandaloneViewUtility;
-use Site\Core\Utility\StrUtility;
+use Site\Frontend\Configuration\Event\CTypeRenderingEvent;
 use Site\Frontend\Event\Rendering\RenderingEvent;
-use Site\Frontend\Interfaces\CTypeRenderingInterface;
 use Site\SiteBackend\Domain\Repository\TtcontentRepository;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Extbase\Persistence\Generic\Mapper\DataMapper;
+use TYPO3\CMS\Core\EventDispatcher\EventDispatcher;
 use TYPO3\CMS\Fluid\View\StandaloneView;
 use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
 
 /**
  * This CType class gets called by tt_content.default via USER_INT.
- * Approach is it to render custom content-elements by getting their CType
- * and resolving the correct fluidtemplate for it.
+ * USER_INT = If you create this object as USER_INT, it will be rendered non-cached, outside the main page-rendering.
  *
- * It's also possible to listen for rendering-events to make calls of custom
- * DataProcessors - see for that any \Site\Frontend\Event\<CType>RenderingEvent::class.
+ * Approach is to render custom content-elements by getting their CType
+ * and resolving the correct Fluidtemplate by that to uppercase the first
+ * letter of the current processing CType (e.g. header -> Header).
  */
 class CTypeRenderer
 {
@@ -32,18 +30,17 @@ class CTypeRenderer
 
     protected RenderingEvent $defaultRenderingEvent;
     protected TtcontentRepository $ttcontentRepository;
-    protected DataMapper $dataMapper;
+    protected EventDispatcher $eventDispatcher;
 
-    public function __construct()
-    {
+    public function __construct(
+        RenderingEvent $renderingEvent,
+        TtcontentRepository $ttcontentRepository,
+        EventDispatcher $eventDispatcher
+    ) {
         $this->frontendExtKey = env('FRONTEND_EXT');
-        $this->defaultRenderingEvent = GeneralUtility::makeInstance(RenderingEvent::class);
-        $this->ttcontentRepository = GeneralUtility::makeInstance(TtcontentRepository::class);
-    }
-
-    public function injectDataMapper(DataMapper $dataMapper)
-    {
-        $this->dataMapper = $dataMapper;
+        $this->defaultRenderingEvent = $renderingEvent;
+        $this->ttcontentRepository = $ttcontentRepository;
+        $this->eventDispatcher = $eventDispatcher;
     }
 
     /**
@@ -53,8 +50,16 @@ class CTypeRenderer
      */
     public function render(): string
     {
+        $request = serverRequest();
+
+        $queryParams = $request->getQueryParams();
+        $emptyPage = (bool) ($queryParams['tx_news_pi1']['emptyPage'] || $queryParams['emptyPage']);
+
+        if ($emptyPage) {
+            return false;
+        }
+
         $uid = $this->cObj->data['uid'];
-        $record = $this->ttcontentRepository->findByUid($uid);
 
         $CType = $this->cObj->data['CType'];
         $templateCType = getCeByCtype($CType);
@@ -64,6 +69,19 @@ class CTypeRenderer
         // Calling the default and custom before rendering events
         $this->defaultRenderingEvent->beforeRendering($this->cObj);
         $this->renderingEvent($templateCType, 'beforeRendering');
+
+        $repository = $this->ttcontentRepository;
+
+        if (null !== $this->cObj->repositoryClass) {
+            $repository = $this->cObj->repositoryClass;
+        }
+
+        if ($repository instanceof TtcontentRepository) {
+            $record = $repository->findByUid($this->cObj->data['uid']);
+            $this->cObj->record = $record;
+        }
+
+        $this->cObj->repository = $repository;
 
         // Rendering the cObj by its rootPaths using $templateCType as the template name
         $this->renderCObj($templateCType);
@@ -76,39 +94,11 @@ class CTypeRenderer
     }
 
     /**
-     * Main-Caller of the RenderingEvent (for both before and after).
+     * Dispatcher for the PSR-15 Event.
      */
     public function renderingEvent(string $templateCType, string $method): ContentObjectRenderer
     {
-        $namespaceIdentifier = 'ContentElements.rendering.EventNamespace';
-        $namespace = ConfigHelper::get($this->frontendExtKey, $namespaceIdentifier);
-
-        if (null === $namespace) {
-            throw new \UnexpectedValueException(sprintf(
-                'Namespace has not been configured in EXT:%s/Configuration/Config.php:%s',
-                $this->frontendExtKey,
-                $namespaceIdentifier
-            ));
-        }
-
-        $eventNamespace = $namespace . $templateCType . 'RenderingEvent';
-
-        if (StrUtility::startsWith($templateCType, 'Container-')) {
-            $eventNamespace = $namespace . 'ContainerRenderingEvent';
-        }
-
-        if (class_exists($eventNamespace)) {
-            $eventClass = GeneralUtility::makeInstance($eventNamespace, $this->cObj);
-
-            if (!$eventClass instanceof CTypeRenderingInterface) {
-                throw new \UnexpectedValueException(sprintf(
-                    'The %s namespace requires to implement the \Site\Frontend\Interfaces\CTypeRenderingInterface',
-                    $eventNamespace
-                ));
-            }
-
-            $this->cObj = $eventClass->{$method}($this->cObj);
-        }
+        $this->cObj = $this->eventDispatcher->dispatch(new CTypeRenderingEvent($this->cObj, $method))->getCObj();
 
         return $this->cObj;
     }
@@ -116,33 +106,42 @@ class CTypeRenderer
     /**
      * @param string $templateCType Template name e.g. 'Headerrte' or 'Textimage' etc.
      */
-    public function renderCObj(string $templateCType)
+    public function renderCObj(string $templateCType): string
     {
+        if ($this->cObj->renderingRootPaths === null) {
+            $this->resolveRenderingRootPaths();
+        }
+
         // Rendering the view by the $rootPaths using $templateCType as Template-Name
         $this->cObj->renderedView = StandaloneViewUtility::render(
             $this->cObj->renderingRootPaths,
-            $templateCType . '.html',
+            $templateCType.'.html',
             [
-                'data' => $this->cObj->data,
                 'cObj' => $this->cObj,
+                'data' => $this->cObj->data,
+                'record' => $this->cObj->record,
             ],
         );
 
-        if ($this->cObj->renderedView === null) {
+        if (null === $this->cObj->renderedView) {
             $view = new StandaloneView($this->cObj);
-            $view->setTemplateSource('<f:debug inline="1">' . sprintf('Looks like the CType %s has an empty template. Please make sure you templated it correctly else it keeps returning a null.', $templateCType) . '</f:debug>');
+            $view->setTemplateSource('<f:debug inline="1">'.sprintf('Looks like the CType %s has an empty template. Please make sure you templated it correctly else it keeps returning a null.', $templateCType).'</f:debug>');
             $this->cObj->renderedView = $view->render();
         }
+
+        return $this->cObj->renderedView;
     }
 
-    protected function resolveRenderingRootPaths()
+    public function resolveRenderingRootPaths(): void
     {
         $rootPathsIdentifier = $this->defaultRootPathsIdentifier;
 
-        if (isset($this->cObj->data['is_irre']) && $this->cObj->data['is_irre']) {
+        if ($this->defaultRenderingEvent->isCtypeIrre($this->cObj->data['CType'])) {
             $rootPathsIdentifier .= '.IRREs';
         }
 
-        $this->cObj->renderingRootPaths = ConfigHelper::get($this->frontendExtKey, $rootPathsIdentifier);
+        $rootPaths = ConfigHelper::get($this->frontendExtKey, $rootPathsIdentifier);
+
+        $this->cObj->renderingRootPaths = $rootPaths;
     }
 }

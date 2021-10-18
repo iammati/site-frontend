@@ -3,3 +3,7 @@
 
 // PAGE with typeNum=1
 @import 'EXT:site_frontend/Configuration/TypoScript/page.typoscript'
+
+[applicationContext == 'Development']
+    config.contentObjectExceptionHandler = 0
+[END]

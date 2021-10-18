@@ -6,3 +6,11 @@ services:
 
   Site\Frontend\:
     resource: '../Classes/*'
+
+  Site\Frontend\Page\Rendering\CTypeRenderer:
+    public: true
+  Site\Frontend\Listener\CTypeRenderingListener:
+    tags:
+      - name: event.listener
+        identifier: 'site-frontend/ctype-rendering-listener'
+        event: Site\Frontend\Configuration\Event\CTypeRenderingEvent
