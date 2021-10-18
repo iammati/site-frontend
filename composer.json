@@ -3,7 +3,7 @@
     "type": "typo3-cms-extension",
     "description": "Usage to build in an incredible fast way a frontend for your project.",
     "license": "GPL-2.0-or-later",
-    "version": "3.0.0",
+    "version": "3.0.1",
     "minimum-stability": "stable",
     "authors": [
         {
@@ -13,7 +13,7 @@
         }
     ],
     "require": {
-        "site/site-core": "*"
+        "site/site-core": "^3.0"
     },
     "autoload": {
         "psr-4": {
