@@ -9,8 +9,14 @@ services:
 
   Site\Frontend\Page\Rendering\CTypeRenderer:
     public: true
-  Site\Frontend\Listener\CTypeRenderingListener:
+
+  Site\Frontend\Listener\CTypes\ContainerRenderingListener:
     tags:
       - name: event.listener
-        identifier: 'site-frontend/ctype-rendering-listener'
+        identifier: 'site-frontend/ctypes-container-rendering-listener'
+        event: Site\Frontend\Configuration\Event\CTypeRenderingEvent
+  Site\Frontend\Listener\DefaultCTypeRenderingListener:
+    tags:
+      - name: event.listener
+        identifier: 'site-frontend/default-ctype-rendering-listener'
         event: Site\Frontend\Configuration\Event\CTypeRenderingEvent

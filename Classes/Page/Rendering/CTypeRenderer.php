@@ -67,7 +67,7 @@ class CTypeRenderer
         $this->resolveRenderingRootPaths();
 
         // Calling the default and custom before rendering events
-        $this->defaultRenderingEvent->beforeRendering($this->cObj);
+        // $this->defaultRenderingEvent->beforeRendering($this->cObj);
         $this->renderingEvent($templateCType, 'beforeRendering');
 
         $repository = $this->ttcontentRepository;
@@ -88,13 +88,13 @@ class CTypeRenderer
 
         // Calling the default and custom after rendering events
         $this->renderingEvent($templateCType, 'afterRendering');
-        $this->defaultRenderingEvent->afterRendering($this->cObj);
+        // $this->defaultRenderingEvent->afterRendering($this->cObj);
 
         return trim($this->cObj->renderedView);
     }
 
     /**
-     * Dispatcher for the PSR-15 Event.
+     * Dispatcher for the PSR-15 CTypeRenderingEvent.
      */
     public function renderingEvent(string $templateCType, string $method): ContentObjectRenderer
     {

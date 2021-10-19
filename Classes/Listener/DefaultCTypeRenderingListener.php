@@ -2,37 +2,53 @@
 
 declare(strict_types=1);
 
-namespace Site\Frontend\Event\Rendering;
+namespace Site\Frontend\Listener;
 
+use B13\Container\DataProcessing\ContainerProcessor;
 use Site\Core\Helper\ConfigHelper;
 use Site\Core\Service\ModelService;
 use Site\Core\Service\TcaService;
 use Site\Core\Utility\IRREUtility;
-use Site\Core\Utility\StrUtility;
-use Site\Frontend\Interfaces\CTypeRenderingInterface;
+use Site\Frontend\Configuration\Event\CTypeRenderingEvent;
 use Symfony\Component\Finder\Finder;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
 
-class RenderingEvent implements CTypeRenderingInterface
+class DefaultCTypeRenderingListener
 {
-    public function beforeRendering(ContentObjectRenderer &$cObj): ContentObjectRenderer
+    protected string $frontendExtKey;
+    protected string $backendExt;
+    protected ContainerProcessor $containerProcessor;
+
+    public function __construct()
     {
-        $backendExt = str_replace('_', '', env('BACKEND_EXT'));
-        $autoGenerateModelRepos = ConfigHelper::get(env('FRONTEND_EXT'), 'ContentElements.rendering.autoGenerateModelRepos');
+        $this->frontendExtKey = env('FRONTEND_EXT');
+        $this->backendExt = str_replace('_', '', env('BACKEND_EXT'));
+        $this->containerProcessor = GeneralUtility::makeInstance(ContainerProcessor::class);
+    }
+
+    public function __invoke(CTypeRenderingEvent $event)
+    {
+        $cObj = $event->getCObj();
+        $data = $cObj->data;
+
+        $CType = $data['CType'];
+
+        $autoGenerateModelRepos = ConfigHelper::get(
+            $this->frontendExtKey,
+            'ContentElements.rendering.autoGenerateModelRepos'
+        );
 
         $uid = $cObj->data['uid'];
 
-        if ($this->isCtypeIrre($cObj->data['CType'])) {
+        if ($this->isCtypeIrre($CType)) {
             $cObj->renderingRootPaths = $cObj->renderingRootPaths['IRREs'];
 
-            $data = $cObj->data;
             $dataKeys = array_keys($data);
             $irreKeys = [];
 
             foreach ($dataKeys as $dataKey) {
-                if (StrUtility::startsWith($dataKey, 'irre_')) {
+                if (str_starts_with($dataKey, 'irre_')) {
                     $irreKeys[] = $dataKey;
                 }
             }
@@ -42,18 +58,25 @@ class RenderingEvent implements CTypeRenderingInterface
 
                 if ($amountOfRecords > 0) {
                     $CType = getCeByCtype($data['CType'], false);
-                    $tableName = 'tx_'.$backendExt.'_domain_model_'.$CType;
+                    $tableName = "tx_{$this->backendExt}_domain_model_{$CType}";
 
                     // Checking if the generated $tableName exists
                     $extPath = ExtensionManagementUtility::extPath(env('BACKEND_EXT'), 'Configuration/TCA/');
-                    $finder = (new Finder())->files()->in($extPath)->name($tableName . '.php');
+                    $finder = (new Finder())
+                        ->files()
+                        ->in($extPath)
+                        ->name("{$tableName}.php")
+                    ;
 
                     if ($finder->hasResults()) {
-                        $repositoryName = ucfirst($CType) . 'Repository';
-                        $repositoryClass = ConfigHelper::get(env('FRONTEND_EXT'), 'ContentElements.rendering.RepositoryNamespace') . $repositoryName;
+                        $repositoryName = ucfirst($CType).'Repository';
+                        $repositoryClass = ConfigHelper::get(
+                            $this->frontendExtKey,
+                            'ContentElements.rendering.RepositoryNamespace'
+                        ).$repositoryName;
 
                         $modelNamespace = '\\Site\\SiteBackend\\Domain\\Model';
-                        $modelClass = $modelNamespace . '\\' . ucfirst($CType);
+                        $modelClass = $modelNamespace.'\\'.ucfirst($CType);
 
                         if (
                             // if config enabled the autogeneration
@@ -85,32 +108,26 @@ class RenderingEvent implements CTypeRenderingInterface
                                 GeneralUtility::makeInstance($repositoryClass)
                             );
 
-                            $cObj->data[$CType.'_items'] = $items;
+                            $data["{$CType}_items"] = $items;
                         }
                     }
                 }
             }
         }
 
-        return $cObj;
+        $cObj->data = $data;
+
+        $event->setCObj($cObj);
     }
 
-    public function afterRendering(ContentObjectRenderer &$cObj): ContentObjectRenderer
+    private function isCtypeIrre(string $CType): bool
     {
-        return $cObj;
-    }
+        $ce = strtolower(getCeByCtype($CType));
 
-    /**
-     * @param string $ctype
-     *
-     * @return bool
-     */
-    public function isCtypeIrre($ctype): bool
-    {
-        $ce = strtolower(getCeByCtype($ctype));
-
-        $backendExt = str_replace('_', '', env('BACKEND_EXT'));
-        $extPath = ExtensionManagementUtility::extPath(env('BACKEND_EXT'), 'Configuration/TCA/tx_' . $backendExt . '_domain_model_' . $ce . '.php');
+        $extPath = ExtensionManagementUtility::extPath(
+            env('BACKEND_EXT'),
+            "Configuration/TCA/tx_{$this->backendExt}_domain_model_{$ce}.php"
+        );
 
         return file_exists($extPath);
     }
