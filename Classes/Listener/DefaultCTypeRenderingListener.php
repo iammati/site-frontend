@@ -10,6 +10,7 @@ use Site\Core\Service\ModelService;
 use Site\Core\Service\TcaService;
 use Site\Core\Utility\IRREUtility;
 use Site\Frontend\Configuration\Event\CTypeRenderingEvent;
+use Site\Frontend\Helper\RenderingHelper;
 use Symfony\Component\Finder\Finder;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -18,16 +19,18 @@ class DefaultCTypeRenderingListener
 {
     protected string $frontendExtKey;
     protected string $backendExt;
+
     protected ContainerProcessor $containerProcessor;
 
     public function __construct()
     {
         $this->frontendExtKey = env('FRONTEND_EXT');
         $this->backendExt = str_replace('_', '', env('BACKEND_EXT'));
+
         $this->containerProcessor = GeneralUtility::makeInstance(ContainerProcessor::class);
     }
 
-    public function __invoke(CTypeRenderingEvent $event)
+    public function __invoke(CTypeRenderingEvent $event): void
     {
         $cObj = $event->getCObj();
         $data = $cObj->data;
@@ -41,7 +44,7 @@ class DefaultCTypeRenderingListener
 
         $uid = $cObj->data['uid'];
 
-        if ($this->isCtypeIrre($CType)) {
+        if (RenderingHelper::isCtypeIrre($CType)) {
             $cObj->renderingRootPaths = $cObj->renderingRootPaths['IRREs'];
 
             $dataKeys = array_keys($data);
@@ -118,17 +121,5 @@ class DefaultCTypeRenderingListener
         $cObj->data = $data;
 
         $event->setCObj($cObj);
-    }
-
-    private function isCtypeIrre(string $CType): bool
-    {
-        $ce = strtolower(getCeByCtype($CType));
-
-        $extPath = ExtensionManagementUtility::extPath(
-            env('BACKEND_EXT'),
-            "Configuration/TCA/tx_{$this->backendExt}_domain_model_{$ce}.php"
-        );
-
-        return file_exists($extPath);
     }
 }

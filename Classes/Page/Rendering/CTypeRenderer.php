@@ -7,9 +7,10 @@ namespace Site\Frontend\Page\Rendering;
 use Site\Core\Helper\ConfigHelper;
 use Site\Core\Utility\StandaloneViewUtility;
 use Site\Frontend\Configuration\Event\CTypeRenderingEvent;
-use Site\Frontend\Event\Rendering\RenderingEvent;
+use Site\Frontend\Helper\RenderingHelper;
 use Site\SiteBackend\Domain\Repository\TtcontentRepository;
 use TYPO3\CMS\Core\EventDispatcher\EventDispatcher;
+use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Fluid\View\StandaloneView;
 use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
 
@@ -28,17 +29,14 @@ class CTypeRenderer
     protected string $frontendExtKey;
     protected string $defaultRootPathsIdentifier = 'ContentElements.rootPaths';
 
-    protected RenderingEvent $defaultRenderingEvent;
     protected TtcontentRepository $ttcontentRepository;
     protected EventDispatcher $eventDispatcher;
 
     public function __construct(
-        RenderingEvent $renderingEvent,
         TtcontentRepository $ttcontentRepository,
         EventDispatcher $eventDispatcher
     ) {
         $this->frontendExtKey = env('FRONTEND_EXT');
-        $this->defaultRenderingEvent = $renderingEvent;
         $this->ttcontentRepository = $ttcontentRepository;
         $this->eventDispatcher = $eventDispatcher;
     }
@@ -67,7 +65,6 @@ class CTypeRenderer
         $this->resolveRenderingRootPaths();
 
         // Calling the default and custom before rendering events
-        // $this->defaultRenderingEvent->beforeRendering($this->cObj);
         $this->renderingEvent($templateCType, 'beforeRendering');
 
         $repository = $this->ttcontentRepository;
@@ -86,9 +83,8 @@ class CTypeRenderer
         // Rendering the cObj by its rootPaths using $templateCType as the template name
         $this->renderCObj($templateCType);
 
-        // Calling the default and custom after rendering events
+        // Triggering PSR-15 event dispatcher
         $this->renderingEvent($templateCType, 'afterRendering');
-        // $this->defaultRenderingEvent->afterRendering($this->cObj);
 
         return trim($this->cObj->renderedView);
     }
@@ -136,7 +132,7 @@ class CTypeRenderer
     {
         $rootPathsIdentifier = $this->defaultRootPathsIdentifier;
 
-        if ($this->defaultRenderingEvent->isCtypeIrre($this->cObj->data['CType'])) {
+        if (RenderingHelper::isCtypeIrre($this->cObj->data['CType'])) {
             $rootPathsIdentifier .= '.IRREs';
         }
 
